@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: subdomain-enum-tool
+    env: python
+    region: us
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: python subdomain_enum_tool.py
+
