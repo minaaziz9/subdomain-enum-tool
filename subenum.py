@@ -81,5 +81,8 @@ def check_live_subdomains(subdomains):
             continue  # Skip if the subdomain is not reachable
     return live_subdomains
 
+import os
+
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5001)
+    port = int(os.environ.get('PORT', 5000))  # Default to 5000 if PORT is not set
+    app.run(debug=True, host='0.0.0.0', port=port)
