@@ -5,7 +5,8 @@ from flask_cors import CORS
 
 app = Flask(__name__)
 CORS(app)
-API_KEY = "0YDDMH0EPULyjUvUaBYQyMzDYVWQaK0W"  # SecurityTrails API Key
+
+API_KEY = "2508a1a605ba0ff16c1d060870a406fe315d714fb1c85fee88a59dfe231d9c89"  # Replace with your actual AlienVault OTX API key
 
 @app.route('/subdomains', methods=['GET'])
 def fetch_subdomains():
@@ -16,7 +17,7 @@ def fetch_subdomains():
         return jsonify({"error": "Domain parameter is required."}), 400
 
     try:
-        subdomains = query_securitytrails(domain)
+        subdomains = query_alienvault(domain)
         subdomains = list(set(filter_valid_subdomains(subdomains)))  # Deduplicate and filter
 
         if not subdomains:
@@ -41,22 +42,22 @@ def fetch_subdomains():
         return jsonify({"error": str(e)}), 500
 
 
-def query_securitytrails(domain):
-    url = f"https://api.securitytrails.com/v1/domain/{domain}/subdomains"
-    headers = {"APIKEY": API_KEY}
+def query_alienvault(domain):
+    url = f"https://otx.alienvault.com/api/v1/indicators/domain/{domain}/passive_dns"
+    headers = {"X-OTX-API-KEY": API_KEY}
 
     try:
         response = httpx.get(url, headers=headers, timeout=10)
         response.raise_for_status()
     except httpx.RequestError as e:
-        raise Exception(f"Failed to fetch data from SecurityTrails: {str(e)}")
+        raise Exception(f"Failed to fetch data from AlienVault OTX: {str(e)}")
 
     try:
         data = response.json()
-        subdomains = [f"{sub}.{domain}" for sub in data.get("subdomains", [])]
+        subdomains = [record['hostname'] for record in data.get('passive_dns', [])]
         return subdomains
     except Exception as e:
-        raise Exception(f"Error parsing SecurityTrails response: {str(e)}")
+        raise Exception(f"Error parsing AlienVault OTX response: {str(e)}")
 
 
 def filter_valid_subdomains(subdomains):
