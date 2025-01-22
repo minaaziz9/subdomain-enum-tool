@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify
 import httpx
 import re
 from flask_cors import CORS
-
+CORS(app)
 app = Flask(__name__)
 
 API_KEY = "0YDDMH0EPULyjUvUaBYQyMzDYVWQaK0W"  # SecurityTrails API Key
