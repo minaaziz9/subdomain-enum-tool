@@ -3,12 +3,12 @@ import httpx
 import re
 from flask_cors import CORS
 
-app = Flask(__name__)
-CORS(app)
+application = Flask(__name__)
+CORS(application)
 
 API_KEY = "2508a1a605ba0ff16c1d060870a406fe315d714fb1c85fee88a59dfe231d9c89"  # Replace with your actual AlienVault OTX API key
 
-@app.route('/subdomains', methods=['GET'])
+@application.route('/subdomains', methods=['GET'])
 def fetch_subdomains():
     domain = request.args.get('domain')
     include_live_check = request.args.get('live', 'false').lower() == 'true'
